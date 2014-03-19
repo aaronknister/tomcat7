@@ -1,0 +1,40 @@
+--- build.xml.orig	2013-07-02 04:01:50.000000000 -0400
++++ build.xml	2013-09-19 23:35:18.621100000 -0400
+@@ -1698,18 +1698,18 @@
+     <attribute name="dir"/>
+     <attribute name="docencoding" default="${file.encoding}"/>
+     <sequential>
+-      <replace encoding="@{docencoding}" summary="true" taskname="patch-javadoc">
+-        <restrict>
+-          <fileset dir="@{dir}" casesensitive="false"
+-              includes="**/index.html,**/index.htm,**/toc.html,**/toc.htm"/>
+-          <!-- TODO: add encoding="@{docencoding}" to contains check, when we
+-               are on ANT 1.9.0: -->
+-          <not>
+-            <contains text="function validURL(url) {" casesensitive="true" />
+-          </not>
+-        </restrict>
++      <fileset dir="@{dir}" casesensitive="false"
++              includes="**/index.html,**/index.htm,**/toc.html,**/toc.htm" id="patch-fileset">
++        <not>
++          <contains text="function validURL(url) {" casesensitive="true" />
++        </not>
++      </fileset>
++      <pathconvert property="patch-filelist" refid="patch-fileset" pathsep="${line.separator}"/>
++      <tempfile property="patch-filelist-tmpfile" prefix="delete" suffix=".tmp"/>
++      <echo file="${patch-filelist-tmpfile}">${patch-filelist}</echo>
++      <replace encoding="@{docencoding}" summary="true" taskname="patch-javadoc" includesfile="${patch-filelist-tmpfile}" dir="@{dir}">
+         <replacetoken><![CDATA[function loadFrames() {]]></replacetoken>
+-        <replacevalue expandProperties="false"><![CDATA[if (targetPage != "" && !validURL(targetPage))
++        <replacevalue><![CDATA[if (targetPage != "" && !validURL(targetPage))
+         targetPage = "undefined";
+     function validURL(url) {
+         var pos = url.indexOf(".html");
+@@ -1747,6 +1747,7 @@
+     }
+     function loadFrames() {]]></replacevalue>
+       </replace>
++    <delete file="${patch-filelist-tmpfile}"/>
+     </sequential>
+   </macrodef>
+ 

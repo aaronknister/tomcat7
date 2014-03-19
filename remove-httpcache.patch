@@ -1,0 +1,11 @@
+--- build.xml.org	2014-02-13 02:40:56.000000000 -0500
++++ build.xml	2014-02-25 11:49:08.797454000 -0500
+@@ -2885,7 +2885,7 @@
+ 
+   <target name="trydownload" if="trydownload.run" depends="trydownload.check">
+     <!-- Downloads a file if not yet downloaded and the source URL is available -->
+-    <get src="${sourcefile}" httpusecaches="${trydownload.httpusecaches}" dest="${destfile}" />
++    <get src="${sourcefile}" dest="${destfile}" />
+   </target>
+ 
+   <!-- ============================ IDE Support ============================ -->
